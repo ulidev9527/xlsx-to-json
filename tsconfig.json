@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "module": "CommonJS",
+        "target": "ESNext",
+        "allowSyntheticDefaultImports": true,
+        "noEmitHelpers": true,
+        "sourceMap": true,
+        "rootDir": "./src",
+        "outDir": "./dist/dts"
+    },
+    "exclude": [
+        "./dist",
+        "./node_modules"
+    ]
+}
