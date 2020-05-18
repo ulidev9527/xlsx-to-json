@@ -4,7 +4,8 @@
   "description": ".xlsx converted to .json",
   "main": "dist/index.js",
   "scripts": {
-    "test": "./node_modules/.bin/ts-node --files ./test/index.ts",
+    "test": "./node_modules/.bin/ts-node --files ./src/index.ts",
+    "testcli": "./node_modules/.bin/ts-node --files ./src/cli.ts",
     "build": "./node_modules/.bin/tsc"
   },
   "repository": {

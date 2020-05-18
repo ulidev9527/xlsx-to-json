@@ -2,21 +2,24 @@ import { FileLinkItem, fileMgr } from "./fileMgr";
 import { xlsxMgr } from "./xlsxMgr";
 import { cliTips } from "./cliTips";
 import { parsingType } from "./parsingType";
+import { writeFileSync } from "fs";
 
 /**
  * 入口
  * @param path 文件/文件夹路径
  */
-export function main(path: string) {
+export function xlsxToJsonMain(path: string) {
     const fileLink = new FileLinkItem(path);
+    let targetFile = '';
     if (!fileLink.isExists) throw `文件/文件夹路径不存在:${fileLink}`;
-    if (fileLink.isFile) xlsxToJson(fileLink.link, fileLink.pathInfo.dir);
-    else if (fileLink.isDirectory) {
-        const savePath = `${fileLink.pathInfo.dir}/xlsx_to_json`;
-        fileMgr.createDirectory(savePath);
-        fileLink.getChildrenFileByType('.xlsx').forEach(item => xlsxToJson(item.link, savePath));
+    if (fileLink.isFile) {
+        targetFile = fileLink.link;
+        xlsxToJson(fileLink.link, fileLink.pathInfo.dir);
+    } else if (fileLink.isDirectory) {
+        targetFile = `${fileLink.pathInfo.dir || fileLink.pathInfo.base}/xlsx_to_json`;
+        fileMgr.createDirectory(targetFile);
+        fileLink.getChildrenFileByType('.xlsx').forEach(item => xlsxToJson(item.link, targetFile));
     }
-    cliTips.high('转换完成');
 }
 
 
@@ -33,6 +36,8 @@ function xlsxToJson(path: string, savePath: string) {
 
     /** xlsx信息 */
     const xlsxInfoArr = xlsxMgr.readXlsx(fileLink.link);
+    /** xlsx 文件里面是否只有一个标签 */
+    const isOneTag = xlsxInfoArr.length < 2;
     xlsxInfoArr.map(xlsxInfo => {
         /** 数据键名 */
         const headKey = xlsxMgr.getKey_Head(xlsxInfo);
@@ -67,14 +72,11 @@ function xlsxToJson(path: string, savePath: string) {
             return result;
         });
 
-        // 存储文件
-        
+        /** 标签名称 */
+        const tagName = isOneTag ? '' : `_${xlsxInfo.tagName}`;
 
+        // 存储文件
+        writeFileSync(`${savePath}/${fileLink.pathInfo.name}${tagName}.json`, JSON.stringify(curData), { encoding: 'utf-8' });
+        cliTips.high('完成：', `${savePath}/${fileLink.pathInfo.name}${tagName}.json`)
     });
 }
-
-
-main('/Users/dylan/Documents/github/xlsx-to-json/test.xlsx');
-
-
-

@@ -11,8 +11,10 @@ export class FileLinkItem {
         this.link = path;
         this.parent = parent;
         this.pathInfo = parse(path);
-        this.stat = statSync(this.link);
-        this.__addTotalSize(this.size);
+        if (this.isExists) {
+            this.stat = statSync(this.link);
+            this.__addTotalSize(this.size);
+        }
     }
 
     /** 地址链 */
