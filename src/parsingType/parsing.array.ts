@@ -8,7 +8,7 @@ export const ParsingArray = new class extends TypeParsing {
     parsing(data: string, type: string):any[] {
         if (data.length === 0) return []; // 空字符串直接返回空数组
         if (type === 'array') {
-            return data.split(',').map(v => Number.isNaN(parseInt(v)) ? v : ParsingNumber.parsing(v, 'number'))
+            return data.split(',').map(v => Number.isNaN(Number(v)) ? v : ParsingNumber.parsing(v, 'number'))
         } else if (type === 'strArray') {
             return data.split('@@');
         } else if (type === 'numArray') {
